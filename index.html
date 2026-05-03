@@ -1,0 +1,171 @@
+<div class="reflection-block">
+  <textarea
+          id="reflectionResponse"
+          placeholder="Write your reflection here..."
+  ></textarea>
+
+    <button onclick="downloadReflectionPDF()">
+        Download My Response as PDF
+    </button>
+</div>
+
+<!-- PDF download library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<style>
+    @font-face {
+        font-family: "ABeeZee";
+        src: url("ABeeZee-Regular.woff2") format("woff2");
+        font-weight: normal;
+        font-style: normal;
+    }
+
+    .reflection-block {
+        font-family: "ABeeZee", Arial, sans-serif;
+        background-color: #ffffff;
+        color: #000000;
+        border-radius: 24px;
+        padding: 24px;
+        max-width: 700px;
+        margin: 30px auto;
+    }
+
+    .reflection-block textarea {
+        width: 100%;
+        min-height: 160px;
+        box-sizing: border-box;
+        font-family: "ABeeZee", Arial, sans-serif;
+        font-size: 16px;
+        color: #000000;
+        background-color: #ffffff;
+        border: none;
+        border-radius: 18px;
+        padding: 16px;
+        resize: vertical;
+        outline: none;
+        box-shadow: 0 0 0 2px #C8B6E2;
+    }
+
+    .reflection-block textarea:focus {
+        box-shadow: 0 0 0 3px #8E75C7;
+    }
+
+    .reflection-block button {
+        margin-top: 18px;
+        font-family: "ABeeZee", Arial, sans-serif;
+        font-size: 16px;
+        color: #ffffff;
+        background-color: #8E75C7;
+        border: none;
+        border-radius: 999px;
+        padding: 12px 22px;
+        cursor: pointer;
+        transition: background-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .reflection-block button:hover {
+        background-color: #C8B6E2;
+        color: #000000;
+        transform: translateY(-2px);
+    }
+
+    .pdf-page {
+        font-family: "ABeeZee", Arial, sans-serif;
+        background-color: #ffffff;
+        color: #000000;
+        padding: 40px;
+        width: 700px;
+        border-radius: 24px;
+    }
+
+    .pdf-header {
+        background-color: #8E75C7;
+        color: #ffffff;
+        padding: 22px;
+        border-radius: 20px;
+        margin-bottom: 24px;
+    }
+
+    .pdf-header h1 {
+        margin: 0;
+        font-size: 26px;
+    }
+
+    .pdf-subtitle {
+        margin-top: 8px;
+        font-size: 14px;
+        color: #ffffff;
+    }
+
+    .pdf-response-box {
+        background-color: #C8B6E2;
+        color: #000000;
+        padding: 24px;
+        border-radius: 20px;
+        line-height: 1.6;
+        white-space: pre-wrap;
+        font-size: 16px;
+    }
+
+    .pdf-footer {
+        margin-top: 24px;
+        font-size: 12px;
+        color: #000000;
+    }
+</style>
+
+<script>
+    function downloadReflectionPDF() {
+        const response = document.getElementById("reflectionResponse").value.trim();
+
+        if (!response) {
+            alert("Please write your reflection before downloading.");
+            return;
+        }
+
+        const pdfContent = document.createElement("div");
+        pdfContent.className = "pdf-page";
+
+        pdfContent.innerHTML = `
+      <div class="pdf-header">
+        <h1>My Curl Confidence Reflection</h1>
+        <div class="pdf-subtitle">A personal reflection from Curl Care 101</div>
+      </div>
+
+      <div class="pdf-response-box">
+        ${escapeHTML(response)}
+      </div>
+
+      <div class="pdf-footer">
+        Downloaded from Curl Care 101
+      </div>
+    `;
+
+        document.body.appendChild(pdfContent);
+
+        const options = {
+            margin: 0.4,
+            filename: "curl-confidence-reflection.pdf",
+            image: { type: "jpeg", quality: 0.98 },
+            html2canvas: { scale: 2, useCORS: true },
+            jsPDF: { unit: "in", format: "letter", orientation: "portrait" }
+        };
+
+        html2pdf()
+            .set(options)
+            .from(pdfContent)
+            .save()
+            .then(() => {
+                document.body.removeChild(pdfContent);
+            });
+    }
+
+    function escapeHTML(text) {
+        return text
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+</script>
